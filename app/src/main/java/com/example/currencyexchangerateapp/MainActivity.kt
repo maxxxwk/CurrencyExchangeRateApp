@@ -4,37 +4,51 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.currencyexchangerateapp.common.viewModel.initViewModel
+import com.example.currencyexchangerateapp.currencyExchangeRate.ui.ExchangeRateScreen
+import com.example.currencyexchangerateapp.currencyExchangeRate.ui.ExchangeRateScreenViewModel
 import com.example.currencyexchangerateapp.ui.theme.CurrencyExchangeRateAppTheme
+import com.example.currencyexchangerateapp.utils.getAppComponent
+import kotlinx.coroutines.FlowPreview
+import javax.inject.Inject
 
+@FlowPreview
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val exchangeRateScreenViewModel: ExchangeRateScreenViewModel by initViewModel { viewModelFactory }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getAppComponent().inject(this)
         setContent {
             CurrencyExchangeRateAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    val navController = rememberNavController()
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = EXCHANGE_RATE_SCREEN
+                    ) {
+                        composable(route = EXCHANGE_RATE_SCREEN) {
+                            ExchangeRateScreen(exchangeRateScreenViewModel = exchangeRateScreenViewModel)
+                        }
+                    }
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    CurrencyExchangeRateAppTheme {
-        Greeting("Android")
+    private companion object {
+        const val EXCHANGE_RATE_SCREEN = "EXCHANGE_RATE_SCREEN"
     }
 }
+
+

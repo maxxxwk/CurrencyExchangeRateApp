@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">CurrencyExchangeRateApp</string>
+    <string name="currencies_loading_error_message">Can\'t load currencies from service</string>
+    <string name="api_limit_error_message">API limit reached for the month.</string>
+    <string name="unknown_error_message">Unknown error.</string>
+    <string name="exchange_rate_loading_error_message">Can\'t load exchange rate from service</string>
+    <string name="incorrect_amount_warning_text">Please, enter amount correctly :(</string>
 </resources>
