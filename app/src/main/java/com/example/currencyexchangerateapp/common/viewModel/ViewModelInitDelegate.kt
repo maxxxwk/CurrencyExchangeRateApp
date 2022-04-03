@@ -13,14 +13,17 @@ class ViewModelInitDelegate<T : ViewModel>(
     private lateinit var viewModelStoreOwner: ViewModelStoreOwner
 
     private val viewModel: T by lazy {
+        if (!this::viewModelStoreOwner.isInitialized) {
+            throw IllegalArgumentException("ViewModelInitDelegate needs ViewModelStoreOwner!")
+        }
         ViewModelProvider(viewModelStoreOwner, getViewModelFactory())[javaClass]
     }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        if (!this::viewModelStoreOwner.isInitialized && thisRef is ViewModelStoreOwner) {
-            viewModelStoreOwner = thisRef
-        } else {
-            throw IllegalArgumentException("ViewModelInitDelegate needs ViewModelStoreOwner!!")
+        if (thisRef is ViewModelStoreOwner) {
+            if (!this::viewModelStoreOwner.isInitialized) {
+                viewModelStoreOwner = thisRef
+            }
         }
         return viewModel
     }
