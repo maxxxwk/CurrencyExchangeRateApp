@@ -17,7 +17,6 @@ abstract class ViewModelModule {
 
     @FlowPreview
     @Binds
-    @IntoMap
-    @ViewModelKey(ExchangeRateScreenViewModel::class)
+    @[IntoMap ViewModelKey(ExchangeRateScreenViewModel::class)]
     abstract fun bindExchangeRateScreenViewModel(exchangeRateScreenViewModel: ExchangeRateScreenViewModel): ViewModel
 }

@@ -1,12 +1,11 @@
 package com.example.currencyexchangerateapp.currencyExchangeRate.ui
 
 import androidx.lifecycle.viewModelScope
-import com.example.currencyexchangerateapp.R
-import com.example.currencyexchangerateapp.common.ToastManager
-import com.example.currencyexchangerateapp.common.resurces.ResourceManager
 import com.example.currencyexchangerateapp.common.viewModel.BaseViewModel
 import com.example.currencyexchangerateapp.currencyExchangeRate.data.CurrenciesRepository
 import com.example.currencyexchangerateapp.currencyExchangeRate.data.ExchangeRateRepository
+import com.example.currencyexchangerateapp.currencyExchangeRate.domain.usecases.AmountTextParsingUseCase
+import com.example.currencyexchangerateapp.currencyExchangeRate.domain.usecases.AmountTextValidationUseCase
 import com.example.currencyexchangerateapp.utils.ResultWrapper
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -17,25 +16,22 @@ import javax.inject.Inject
 class ExchangeRateScreenViewModel @Inject constructor(
     private val currencyRepository: CurrenciesRepository,
     private val exchangeRateRepository: ExchangeRateRepository,
-    private val resourceManager: ResourceManager,
-    private val toastManager: ToastManager
-) : BaseViewModel<ExchangeRateScreenState, ExchangeRateScreenIntent>() {
-    override val initialState: ExchangeRateScreenState
-        get() = ExchangeRateScreenState.Loading
+    private val amountTextValidationUseCase: AmountTextValidationUseCase,
+    private val amountTextParsingUseCase: AmountTextParsingUseCase
+) : BaseViewModel<ExchangeRateScreenState, ExchangeRateScreenIntent>(ExchangeRateScreenState.Loading) {
 
-    private val amountFieldValueState = MutableSharedFlow<String>(replay = 1)
+    private val amountFlow = MutableSharedFlow<Double>(replay = 1)
+    private var lastAmount: Double = AMOUNT_DEFAULT_VALUE.toDouble()
 
     init {
-        amountFieldValueState.debounce(DEBOUNCE_TIME)
-            .map { it.toDouble() }
-            .catch { interact(ExchangeRateScreenIntent.ShowWarningToast(resourceManager.getString(R.string.incorrect_amount_warning_text))) }
-            .distinctUntilChanged()
+        amountFlow.debounce(DEBOUNCE_TIME)
             .onEach {
                 interact(ExchangeRateScreenIntent.LoadExchangeRate(it))
+                lastAmount = it
             }.launchIn(viewModelScope)
     }
 
-    override fun handleIntent(
+    override fun reduce(
         intent: ExchangeRateScreenIntent,
         oldSTATE: ExchangeRateScreenState
     ): ExchangeRateScreenState = when (intent) {
@@ -44,74 +40,96 @@ class ExchangeRateScreenViewModel @Inject constructor(
             ExchangeRateScreenState.Loading
         }
         is ExchangeRateScreenIntent.EnterAmount -> {
-            viewModelScope.launch { amountFieldValueState.emit(intent.amount) }
-            oldSTATE
+            val validatedText = handleEnteredAmount(intent.amount)
+            (oldSTATE as? ExchangeRateScreenState.Content)?.copy(
+                amount = validatedText
+            ) ?: oldSTATE
         }
         is ExchangeRateScreenIntent.LoadedCurrencies -> {
             ExchangeRateScreenState.Content(
-                ExchangeRateScreenUIModel(intent.currencies, null, null, "")
+                intent.currencies,
+                null,
+                null,
+                "",
+                AMOUNT_DEFAULT_VALUE
             )
         }
         is ExchangeRateScreenIntent.LoadedExchangeRate -> {
-            ExchangeRateScreenState.Content(
-                (oldSTATE as ExchangeRateScreenState.Content).exchangeRateScreenUIModel
-                    .copy(amount = intent.exchangeRate.amount)
-            )
+            (oldSTATE as? ExchangeRateScreenState.Content)?.copy(
+                exchangeRate = intent.exchangeRate.amount
+            ) ?: oldSTATE
         }
         is ExchangeRateScreenIntent.SelectCurrencyFrom -> {
-            ExchangeRateScreenState.Content(
-                (oldSTATE as ExchangeRateScreenState.Content).exchangeRateScreenUIModel
-                    .copy(from = intent.currency.code)
-            )
+            (oldSTATE as? ExchangeRateScreenState.Content)?.copy(
+                from = intent.selectedCurrency
+            )?.apply {
+                if (from != null && to != null) {
+                    interact(ExchangeRateScreenIntent.EnterAmount(amount))
+                }
+            } ?: oldSTATE
         }
         is ExchangeRateScreenIntent.SelectCurrencyTo -> {
-            ExchangeRateScreenState.Content(
-                (oldSTATE as ExchangeRateScreenState.Content).exchangeRateScreenUIModel
-                    .copy(to = intent.currency.code)
-            )
+            (oldSTATE as? ExchangeRateScreenState.Content)?.copy(
+                to = intent.selectedCurrency
+            )?.apply {
+                if (from != null && to != null) {
+                    interact(ExchangeRateScreenIntent.EnterAmount(amount))
+                }
+            } ?: oldSTATE
         }
         is ExchangeRateScreenIntent.ShowError -> {
             ExchangeRateScreenState.Error(intent.message)
         }
         is ExchangeRateScreenIntent.LoadExchangeRate -> {
-            val exchangeRateScreenUIModel =
-                (oldSTATE as ExchangeRateScreenState.Content).exchangeRateScreenUIModel
-            exchangeRateScreenUIModel.from?.let { from ->
-                exchangeRateScreenUIModel.to?.let { to ->
+            val content = (oldSTATE as? ExchangeRateScreenState.Content)
+            content?.from?.let { from ->
+                content.to?.let { to ->
                     loadExchangeRate(from, to, intent.amount)
                 }
             }
-            oldSTATE
-        }
-        is ExchangeRateScreenIntent.ShowWarningToast -> {
-            viewModelScope.launch { toastManager.showShortToast(intent.text) }
             oldSTATE
         }
     }
 
     private fun loadExchangeRate(from: String, to: String, amount: Double) = viewModelScope.launch {
         when (val exchangeRateResult = exchangeRateRepository.getExchangeRate(from, to, amount)) {
-            is ResultWrapper.Fail -> interact(ExchangeRateScreenIntent.ShowError(exchangeRateResult.errorMessage))
+            is ResultWrapper.Fail -> interact(
+                ExchangeRateScreenIntent.ShowError(exchangeRateResult.errorMessage)
+            )
             is ResultWrapper.Success -> interact(
-                ExchangeRateScreenIntent.LoadedExchangeRate(
-                    exchangeRateResult.value
-                )
+                ExchangeRateScreenIntent.LoadedExchangeRate(exchangeRateResult.value)
             )
         }
     }
 
     private fun loadCurrencies() = viewModelScope.launch {
         when (val currenciesResult = currencyRepository.getCurrencies()) {
-            is ResultWrapper.Fail -> interact(ExchangeRateScreenIntent.ShowError(currenciesResult.errorMessage))
+            is ResultWrapper.Fail -> interact(
+                ExchangeRateScreenIntent.ShowError(currenciesResult.errorMessage)
+            )
             is ResultWrapper.Success -> interact(
-                ExchangeRateScreenIntent.LoadedCurrencies(
-                    currenciesResult.value
-                )
+                ExchangeRateScreenIntent.LoadedCurrencies(currenciesResult.value)
             )
         }
     }
 
+    private fun handleEnteredAmount(enteredAmount: String): String {
+        val validatedText = amountTextValidationUseCase(enteredAmount)
+        amountTextParsingUseCase(validatedText)?.let {
+            viewModelScope.launch {
+                amountFlow.tryEmit(it)
+            }
+        }
+        if (validatedText.isEmpty()) {
+            viewModelScope.launch {
+                amountFlow.tryEmit(lastAmount)
+            }
+        }
+        return validatedText
+    }
+
     private companion object {
         const val DEBOUNCE_TIME = 500L
+        const val AMOUNT_DEFAULT_VALUE = "1.0"
     }
 }

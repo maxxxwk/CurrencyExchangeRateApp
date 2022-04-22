@@ -1,32 +1,48 @@
 package com.example.currencyexchangerateapp.currencyExchangeRate.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import com.example.currencyexchangerateapp.currencyExchangeRate.ui.ExchangeRateScreenState.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import kotlinx.coroutines.FlowPreview
 
+@ExperimentalMaterialApi
 @FlowPreview
 @Composable
 fun ExchangeRateScreen(exchangeRateScreenViewModel: ExchangeRateScreenViewModel) {
-    val state = exchangeRateScreenViewModel.state.collectAsState()
-    when (val value = state.value) {
-        Loading -> ExchangeRateScreenLoading()
-        is Error -> ExchangeRateScreenError(errorMessage = value.message)
-        is Content -> ExchangeRateScreenContent(exchangeRateScreenUIModel = value.exchangeRateScreenUIModel)
+    val state by exchangeRateScreenViewModel.state.collectAsState()
+    LaunchedEffect(Unit) {
+        exchangeRateScreenViewModel.interact(
+            ExchangeRateScreenIntent.LoadCurrencies
+        )
     }
-}
-
-@Composable
-fun ExchangeRateScreenLoading() {
-
-}
-
-@Composable
-fun ExchangeRateScreenError(errorMessage: String) {
-
-}
-
-@Composable
-fun ExchangeRateScreenContent(exchangeRateScreenUIModel: ExchangeRateScreenUIModel) {
-
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colors.background
+    ) {
+        when (state) {
+            ExchangeRateScreenState.Loading -> ExchangeRateScreenLoading()
+            is ExchangeRateScreenState.Error -> ExchangeRateScreenError(
+                errorMessage = (state as ExchangeRateScreenState.Error).message
+            )
+            is ExchangeRateScreenState.Content -> ExchangeRateScreenContent(
+                content = state as ExchangeRateScreenState.Content,
+                selectCurrencyFrom = {
+                    exchangeRateScreenViewModel.interact(
+                        ExchangeRateScreenIntent.SelectCurrencyFrom(it)
+                    )
+                },
+                selectCurrencyTo = {
+                    exchangeRateScreenViewModel.interact(
+                        ExchangeRateScreenIntent.SelectCurrencyTo(it)
+                    )
+                },
+                onAmountEntered = {
+                    exchangeRateScreenViewModel.interact(
+                        ExchangeRateScreenIntent.EnterAmount(it)
+                    )
+                }
+            )
+        }
+    }
 }

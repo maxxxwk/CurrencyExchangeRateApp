@@ -3,6 +3,7 @@ package com.example.currencyexchangerateapp.di
 import com.example.currencyexchangerateapp.BuildConfig
 import com.example.currencyexchangerateapp.common.network.ApiKeyInterceptor
 import com.example.currencyexchangerateapp.currencyExchangeRate.data.network.CurrencyService
+import com.example.currencyexchangerateapp.currencyExchangeRate.data.network.FakeCurrencyService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -28,6 +29,13 @@ class NetworkModule {
 
     @Provides
     @Singleton
+    @FakeService
+    fun provideFakeCurrencyService(): CurrencyService {
+        return FakeCurrencyService()
+    }
+
+    @Provides
+    @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         converterFactory: Converter.Factory
@@ -42,8 +50,17 @@ class NetworkModule {
     @ExperimentalSerializationApi
     @Provides
     @Singleton
-    fun provideConverterFactory(): Converter.Factory {
-        return Json.asConverterFactory("application/json".toMediaType())
+    fun provideConverterFactory(json: Json): Converter.Factory {
+        return json.asConverterFactory("application/json".toMediaType())
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+        }
     }
 
     @Provides

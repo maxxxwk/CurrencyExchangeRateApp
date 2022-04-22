@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<STATE, INTENT> : ViewModel() {
-    protected abstract val initialState: STATE
+abstract class BaseViewModel<STATE, INTENT>(private val initialState: STATE) : ViewModel() {
+
     private val _state: MutableStateFlow<STATE> by lazy { MutableStateFlow(initialState) }
     val state: StateFlow<STATE>
         get() = _state.asStateFlow()
@@ -14,12 +14,14 @@ abstract class BaseViewModel<STATE, INTENT> : ViewModel() {
     private val interactions = MutableSharedFlow<INTENT>(replay = 1)
 
     init {
-        interactions.onEach {
-            _state.emit(handleIntent(it, _state.value))
+        interactions.onEach { intent ->
+            _state.update { oldState ->
+                reduce(intent, oldState)
+            }
         }.launchIn(viewModelScope)
     }
 
-    protected abstract fun handleIntent(intent: INTENT, oldSTATE: STATE): STATE
+    protected abstract fun reduce(intent: INTENT, oldSTATE: STATE): STATE
 
     fun interact(intent: INTENT) = viewModelScope.launch {
         interactions.emit(intent)

@@ -3,18 +3,19 @@ package com.example.currencyexchangerateapp.currencyExchangeRate.data
 import com.example.currencyexchangerateapp.R
 import com.example.currencyexchangerateapp.common.resurces.ResourceManager
 import com.example.currencyexchangerateapp.currencyExchangeRate.data.network.CurrencyService
-import com.example.currencyexchangerateapp.currencyExchangeRate.domain.models.Currency
 import com.example.currencyexchangerateapp.currencyExchangeRate.domain.models.ExchangeRate
+import com.example.currencyexchangerateapp.di.DispatcherIO
+import com.example.currencyexchangerateapp.di.FakeService
 import com.example.currencyexchangerateapp.utils.ResultWrapper
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import java.lang.Exception
+import javax.inject.Inject
 
-class ExchangeRateRepository(
-    private val currencyService: CurrencyService,
+class ExchangeRateRepository @Inject constructor(
+    @FakeService private val currencyService: CurrencyService,
     private val resourceManager: ResourceManager,
-    private val dispatcher: CoroutineDispatcher
+    @DispatcherIO private val dispatcher: CoroutineDispatcher
 ) {
     suspend fun getExchangeRate(
         from: String,
@@ -22,9 +23,7 @@ class ExchangeRateRepository(
         amount: Double
     ): ResultWrapper<ExchangeRate> = withContext(dispatcher) {
         val exchangeRateResponse = try {
-            coroutineScope {
-                currencyService.getExchangeRate(from, to, amount)
-            }
+            currencyService.getExchangeRate(from, to, amount)
         } catch (e: Exception) {
             return@withContext ResultWrapper.Fail(resourceManager.getString(R.string.exchange_rate_loading_error_message))
         }

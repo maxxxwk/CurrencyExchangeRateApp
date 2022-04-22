@@ -4,8 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -17,6 +18,7 @@ import com.example.currencyexchangerateapp.utils.getAppComponent
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
+@ExperimentalMaterialApi
 @FlowPreview
 class MainActivity : ComponentActivity() {
 
@@ -28,27 +30,38 @@ class MainActivity : ComponentActivity() {
         getAppComponent().inject(this)
         setContent {
             CurrencyExchangeRateAppTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
+                val scaffoldState = rememberScaffoldState()
+                Scaffold(
+                    scaffoldState = scaffoldState,
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    text = stringResource(id = R.string.app_name),
+                                    color = MaterialTheme.colors.primary
+                                )
+                            },
+                            backgroundColor = MaterialTheme.colors.secondary
+                        )
+                    }
+                ) {
                     val navController = rememberNavController()
 
                     NavHost(
                         navController = navController,
-                        startDestination = EXCHANGE_RATE_SCREEN
+                        startDestination = NavigationRoutes.EXCHANGE_RATE_SCREEN
                     ) {
-                        composable(route = EXCHANGE_RATE_SCREEN) {
-                            ExchangeRateScreen(
-                                exchangeRateScreenViewModel = viewModel(factory = viewModelFactory)
-                            )
+                        composable(NavigationRoutes.EXCHANGE_RATE_SCREEN) {
+                            ExchangeRateScreen(exchangeRateScreenViewModel = viewModel(factory = viewModelFactory))
                         }
                     }
                 }
             }
         }
     }
-
-    private companion object {
-        const val EXCHANGE_RATE_SCREEN = "EXCHANGE_RATE_SCREEN"
-    }
 }
 
-
+object NavigationRoutes {
+    const val EXCHANGE_RATE_SCREEN = "EXCHANGE_RATE_SCREEN"
+}

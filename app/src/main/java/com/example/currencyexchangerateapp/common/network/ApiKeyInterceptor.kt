@@ -13,11 +13,11 @@ class ApiKeyInterceptor @Inject constructor() : Interceptor {
         return chain.proceed(
             request.newBuilder()
                 .url(
-                    request.url.newBuilder()
+                    request.url
+                        .newBuilder()
                         .addQueryParameter(API_KEY_PARAMETER_NAME, BuildConfig.API_KEY)
                         .build()
-                )
-                .build()
+                ).build()
         )
     }
 

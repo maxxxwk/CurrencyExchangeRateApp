@@ -9,11 +9,11 @@ import javax.inject.Singleton
 
 @Singleton
 class ViewModelFactory @Inject constructor(
-    private val viewModelProvides: MutableMap<Class<out ViewModel>, Provider<ViewModel>>
+    private val viewModelProviders: MutableMap<Class<out ViewModel>, Provider<ViewModel>>
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val viewModelProvider = viewModelProvides[modelClass]
+        val viewModelProvider = viewModelProviders[modelClass]
             ?: throw IllegalArgumentException("ViewModel class $modelClass not found!")
         return viewModelProvider.get() as T
     }
