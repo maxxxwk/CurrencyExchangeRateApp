@@ -3,7 +3,6 @@ package com.example.currencyexchangerateapp.di
 import com.example.currencyexchangerateapp.BuildConfig
 import com.example.currencyexchangerateapp.common.network.ApiKeyInterceptor
 import com.example.currencyexchangerateapp.currencyExchangeRate.data.network.CurrencyService
-import com.example.currencyexchangerateapp.currencyExchangeRate.data.network.FakeCurrencyService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -25,13 +24,6 @@ class NetworkModule {
         retrofit: Retrofit
     ): CurrencyService {
         return retrofit.create(CurrencyService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    @FakeService
-    fun provideFakeCurrencyService(): CurrencyService {
-        return FakeCurrencyService()
     }
 
     @Provides

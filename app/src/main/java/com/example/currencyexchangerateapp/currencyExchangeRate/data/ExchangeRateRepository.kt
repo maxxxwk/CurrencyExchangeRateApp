@@ -5,7 +5,6 @@ import com.example.currencyexchangerateapp.common.resurces.ResourceManager
 import com.example.currencyexchangerateapp.currencyExchangeRate.data.network.CurrencyService
 import com.example.currencyexchangerateapp.currencyExchangeRate.domain.models.ExchangeRate
 import com.example.currencyexchangerateapp.di.DispatcherIO
-import com.example.currencyexchangerateapp.di.FakeService
 import com.example.currencyexchangerateapp.utils.ResultWrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -13,7 +12,7 @@ import java.lang.Exception
 import javax.inject.Inject
 
 class ExchangeRateRepository @Inject constructor(
-    @FakeService private val currencyService: CurrencyService,
+    private val currencyService: CurrencyService,
     private val resourceManager: ResourceManager,
     @DispatcherIO private val dispatcher: CoroutineDispatcher
 ) {

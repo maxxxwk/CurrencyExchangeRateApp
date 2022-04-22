@@ -8,7 +8,6 @@ import com.example.currencyexchangerateapp.currencyExchangeRate.data.db.Currency
 import com.example.currencyexchangerateapp.currencyExchangeRate.data.network.CurrencyService
 import com.example.currencyexchangerateapp.currencyExchangeRate.domain.models.Currency
 import com.example.currencyexchangerateapp.di.DispatcherIO
-import com.example.currencyexchangerateapp.di.FakeService
 import com.example.currencyexchangerateapp.utils.ResultWrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.coroutineScope
@@ -19,7 +18,7 @@ import javax.inject.Inject
 
 class CurrenciesRepository @Inject constructor(
     private val currenciesDao: CurrenciesDao,
-    @FakeService private val currencyService: CurrencyService,
+    private val currencyService: CurrencyService,
     private val resourceManager: ResourceManager,
     @DispatcherIO private val dispatcher: CoroutineDispatcher
 ) {
