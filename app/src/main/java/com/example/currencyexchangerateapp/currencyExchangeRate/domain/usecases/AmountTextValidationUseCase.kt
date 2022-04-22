@@ -8,15 +8,15 @@ class AmountTextValidationUseCase @Inject constructor() {
             .filter { it != ' ' && it != '-' }
         val pointIndex = newText.indexOf('.')
         if (pointIndex != -1) {
-            if (newText.length > (pointIndex + 1) + MAX_ALLOWABLE_DIGITS_COUNT_AFTER_POINT) {
-                newText = newText.substring(
-                    0, (pointIndex + 1) + MAX_ALLOWABLE_DIGITS_COUNT_AFTER_POINT
-                )
-            }
             if (newText.count { it == '.' } > 1) {
                 newText = newText.filterIndexed { index, c ->
                     !(c == '.' && index != pointIndex)
                 }
+            }
+            if (newText.length > (pointIndex + 1) + MAX_ALLOWABLE_DIGITS_COUNT_AFTER_POINT) {
+                newText = newText.substring(
+                    0, (pointIndex + 1) + MAX_ALLOWABLE_DIGITS_COUNT_AFTER_POINT
+                )
             }
         }
         return newText
