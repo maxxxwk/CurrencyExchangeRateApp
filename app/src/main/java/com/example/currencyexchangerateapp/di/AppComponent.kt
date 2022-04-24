@@ -2,6 +2,7 @@ package com.example.currencyexchangerateapp.di
 
 import android.content.Context
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.ui.ExperimentalComposeUiApi
 import com.example.currencyexchangerateapp.MainActivity
 import dagger.BindsInstance
 import dagger.Component
@@ -13,6 +14,7 @@ import javax.inject.Singleton
 interface AppComponent {
 
     @ExperimentalMaterialApi
+    @ExperimentalComposeUiApi
     @FlowPreview
     fun inject(mainActivity: MainActivity)
 

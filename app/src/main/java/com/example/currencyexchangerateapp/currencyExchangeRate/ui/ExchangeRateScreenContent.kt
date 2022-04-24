@@ -19,8 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.example.currencyexchangerateapp.R
 import com.example.currencyexchangerateapp.currencyExchangeRate.domain.models.Currency
 
-@Suppress("OPT_IN_IS_NOT_ENABLED")
-@OptIn(ExperimentalComposeUiApi::class)
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
 fun ExchangeRateScreenContent(

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +20,7 @@ import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
+@ExperimentalComposeUiApi
 @FlowPreview
 class MainActivity : ComponentActivity() {
 
