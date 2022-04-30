@@ -8,17 +8,15 @@ import androidx.compose.material.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.currencyexchangerateapp.currencyExchangeRate.ui.ExchangeRateScreen
+import com.example.currencyexchangerateapp.currencyExchangeRate.ui.NavigationRoutes
 import com.example.currencyexchangerateapp.ui.theme.CurrencyExchangeRateAppTheme
 import com.example.currencyexchangerateapp.utils.getAppComponent
 import com.example.currencyexchangerateapp.utils.initViewModel
 import kotlinx.coroutines.FlowPreview
-import javax.inject.Inject
 
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
@@ -49,9 +47,9 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(
                         navController = navController,
-                        startDestination = NavigationRoutes.EXCHANGE_RATE_SCREEN
+                        startDestination = NavigationRoutes.ExchangeRateScreen.route
                     ) {
-                        composable(NavigationRoutes.EXCHANGE_RATE_SCREEN) {
+                        composable(NavigationRoutes.ExchangeRateScreen.route) {
                             ExchangeRateScreen(
                                 exchangeRateScreenViewModel = initViewModel { getAppComponent().getExchangeRateScreenViewModel() }
                             )
@@ -61,8 +59,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-object NavigationRoutes {
-    const val EXCHANGE_RATE_SCREEN = "EXCHANGE_RATE_SCREEN"
 }
