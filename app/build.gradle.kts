@@ -9,9 +9,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
 }
 
-val localPropertiesFile = rootProject.file("local.properties")
-val localProperties = Properties()
-localProperties.load(FileInputStream(localPropertiesFile))
+val localProperties = Properties().apply {
+    load(FileInputStream(rootProject.file("local.properties")))
+}
 
 android {
 
@@ -50,7 +50,7 @@ android {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     buildFeatures.compose = true
     composeOptions.kotlinCompilerExtensionVersion = Versions.compose
-    
+
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"

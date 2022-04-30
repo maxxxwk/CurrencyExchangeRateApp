@@ -5,7 +5,7 @@ import dagger.Provides
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-@Module(includes = [ViewModelModule::class, NetworkModule::class, DBModule::class])
+@Module(includes = [NetworkModule::class, DBModule::class])
 class AppModule {
 
     @Provides

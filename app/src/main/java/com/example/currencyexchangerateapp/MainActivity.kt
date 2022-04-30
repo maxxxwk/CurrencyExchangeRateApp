@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.currencyexchangerateapp.currencyExchangeRate.ui.ExchangeRateScreen
 import com.example.currencyexchangerateapp.ui.theme.CurrencyExchangeRateAppTheme
 import com.example.currencyexchangerateapp.utils.getAppComponent
+import com.example.currencyexchangerateapp.utils.initViewModel
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
@@ -24,12 +25,8 @@ import javax.inject.Inject
 @FlowPreview
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getAppComponent().inject(this)
         setContent {
             CurrencyExchangeRateAppTheme {
                 val scaffoldState = rememberScaffoldState()
@@ -55,7 +52,9 @@ class MainActivity : ComponentActivity() {
                         startDestination = NavigationRoutes.EXCHANGE_RATE_SCREEN
                     ) {
                         composable(NavigationRoutes.EXCHANGE_RATE_SCREEN) {
-                            ExchangeRateScreen(exchangeRateScreenViewModel = viewModel(factory = viewModelFactory))
+                            ExchangeRateScreen(
+                                exchangeRateScreenViewModel = initViewModel { getAppComponent().getExchangeRateScreenViewModel() }
+                            )
                         }
                     }
                 }

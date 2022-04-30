@@ -1,9 +1,7 @@
 package com.example.currencyexchangerateapp.di
 
 import android.content.Context
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.ui.ExperimentalComposeUiApi
-import com.example.currencyexchangerateapp.MainActivity
+import com.example.currencyexchangerateapp.currencyExchangeRate.ui.ExchangeRateScreenViewModel
 import dagger.BindsInstance
 import dagger.Component
 import kotlinx.coroutines.FlowPreview
@@ -13,10 +11,8 @@ import javax.inject.Singleton
 @Singleton
 interface AppComponent {
 
-    @ExperimentalMaterialApi
-    @ExperimentalComposeUiApi
     @FlowPreview
-    fun inject(mainActivity: MainActivity)
+    fun getExchangeRateScreenViewModel(): ExchangeRateScreenViewModel
 
     @Component.Builder
     interface Builder {
