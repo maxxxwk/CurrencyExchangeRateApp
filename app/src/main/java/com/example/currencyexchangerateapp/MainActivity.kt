@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.currencyexchangerateapp.currencyExchangeRate.ui.ExchangeRateScreen
 import com.example.currencyexchangerateapp.currencyExchangeRate.ui.NavigationRoutes
 import com.example.currencyexchangerateapp.ui.theme.CurrencyExchangeRateAppTheme
-import com.example.currencyexchangerateapp.utils.getAppComponent
+import com.example.currencyexchangerateapp.utils.appComponent
 import com.example.currencyexchangerateapp.utils.initViewModel
 import kotlinx.coroutines.FlowPreview
 
@@ -50,9 +50,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = NavigationRoutes.ExchangeRateScreen.route
                     ) {
                         composable(NavigationRoutes.ExchangeRateScreen.route) {
-                            ExchangeRateScreen(
-                                exchangeRateScreenViewModel = initViewModel { getAppComponent().getExchangeRateScreenViewModel() }
-                            )
+                            ExchangeRateScreen(initViewModel(appComponent::getExchangeRateScreenViewModel))
                         }
                     }
                 }
