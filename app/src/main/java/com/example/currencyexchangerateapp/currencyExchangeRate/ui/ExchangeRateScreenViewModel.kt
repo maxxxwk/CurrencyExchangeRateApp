@@ -11,8 +11,10 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @FlowPreview
+@Singleton
 class ExchangeRateScreenViewModel @Inject constructor(
     private val currencyRepository: CurrenciesRepository,
     private val exchangeRateRepository: ExchangeRateRepository,

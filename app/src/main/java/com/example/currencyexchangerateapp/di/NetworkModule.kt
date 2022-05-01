@@ -13,13 +13,11 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
-import javax.inject.Singleton
 
 @Module
 class NetworkModule {
 
     @Provides
-    @Singleton
     fun provideCurrencyService(
         retrofit: Retrofit
     ): CurrencyService {
@@ -27,7 +25,6 @@ class NetworkModule {
     }
 
     @Provides
-    @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         converterFactory: Converter.Factory
@@ -41,14 +38,12 @@ class NetworkModule {
 
     @ExperimentalSerializationApi
     @Provides
-    @Singleton
     fun provideConverterFactory(json: Json): Converter.Factory {
         return json.asConverterFactory("application/json".toMediaType())
     }
 
 
     @Provides
-    @Singleton
     fun provideJson(): Json {
         return Json {
             ignoreUnknownKeys = true
@@ -56,7 +51,6 @@ class NetworkModule {
     }
 
     @Provides
-    @Singleton
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         apiKeyInterceptor: ApiKeyInterceptor
@@ -68,7 +62,6 @@ class NetworkModule {
     }
 
     @Provides
-    @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
             setLevel(HttpLoggingInterceptor.Level.BASIC)

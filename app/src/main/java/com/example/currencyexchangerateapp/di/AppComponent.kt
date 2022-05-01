@@ -5,6 +5,7 @@ import com.example.currencyexchangerateapp.currencyExchangeRate.ui.ExchangeRateS
 import dagger.BindsInstance
 import dagger.Component
 import kotlinx.coroutines.FlowPreview
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Component(modules = [AppModule::class])
@@ -12,7 +13,7 @@ import javax.inject.Singleton
 interface AppComponent {
 
     @FlowPreview
-    fun getExchangeRateScreenViewModel(): ExchangeRateScreenViewModel
+    fun getExchangeRateScreenViewModelProvider(): Provider<ExchangeRateScreenViewModel>
 
     @Component.Builder
     interface Builder {

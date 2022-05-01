@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = NavigationRoutes.ExchangeRateScreen.route
                     ) {
                         composable(NavigationRoutes.ExchangeRateScreen.route) {
-                            ExchangeRateScreen(initViewModel(appComponent::getExchangeRateScreenViewModel))
+                            ExchangeRateScreen(initViewModel(appComponent::getExchangeRateScreenViewModelProvider))
                         }
                     }
                 }
