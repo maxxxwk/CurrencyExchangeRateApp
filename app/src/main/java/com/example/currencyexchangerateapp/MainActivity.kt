@@ -8,19 +8,20 @@ import androidx.compose.material.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.currencyexchangerateapp.currencyExchangeRate.ui.ExchangeRateScreen
 import com.example.currencyexchangerateapp.currencyExchangeRate.ui.NavigationRoutes
 import com.example.currencyexchangerateapp.ui.theme.CurrencyExchangeRateAppTheme
-import com.example.currencyexchangerateapp.utils.appComponent
-import com.example.currencyexchangerateapp.utils.initViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
 
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @FlowPreview
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +51,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = NavigationRoutes.ExchangeRateScreen.route
                     ) {
                         composable(NavigationRoutes.ExchangeRateScreen.route) {
-                            ExchangeRateScreen(initViewModel(appComponent::getExchangeRateScreenViewModelProvider))
+                            ExchangeRateScreen(hiltViewModel())
                         }
                     }
                 }

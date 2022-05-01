@@ -5,8 +5,9 @@ import java.io.FileInputStream
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    kotlin("kapt")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
+    id("dagger.hilt.android.plugin")
 }
 
 val localProperties = Properties().apply {
@@ -77,6 +78,11 @@ dependencies {
     //dagger 2
     implementation(Libs.dagger)
     kapt(KaptCompilers.dagger)
+
+    //hilt
+    implementation(Libs.hilt)
+    kapt(KaptCompilers.hilt)
+    implementation(Libs.hiltNavigationCompose)
 
     //kotlinx-serialization
     implementation(Libs.kotlinxSerialization)

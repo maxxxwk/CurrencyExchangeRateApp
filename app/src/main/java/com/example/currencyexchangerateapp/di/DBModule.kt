@@ -6,8 +6,12 @@ import com.example.currencyexchangerateapp.currencyExchangeRate.data.db.Currenci
 import com.example.currencyexchangerateapp.currencyExchangeRate.data.db.CurrenciesDao
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 
 @Module
+@InstallIn(SingletonComponent::class)
 class DBModule {
 
     @Provides
@@ -16,7 +20,7 @@ class DBModule {
     }
 
     @Provides
-    fun provideCurrenciesDB(context: Context): CurrenciesDB {
+    fun provideCurrenciesDB(@ApplicationContext context: Context): CurrenciesDB {
         return Room.databaseBuilder(context, CurrenciesDB::class.java, "currencies-db").build()
     }
 }

@@ -7,12 +7,14 @@ import com.example.currencyexchangerateapp.currencyExchangeRate.data.ExchangeRat
 import com.example.currencyexchangerateapp.currencyExchangeRate.domain.usecases.AmountTextParsingUseCase
 import com.example.currencyexchangerateapp.currencyExchangeRate.domain.usecases.AmountTextValidationUseCase
 import com.example.currencyexchangerateapp.utils.ResultWrapper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @FlowPreview
+@HiltViewModel
 class ExchangeRateScreenViewModel @Inject constructor(
     private val currencyRepository: CurrenciesRepository,
     private val exchangeRateRepository: ExchangeRateRepository,

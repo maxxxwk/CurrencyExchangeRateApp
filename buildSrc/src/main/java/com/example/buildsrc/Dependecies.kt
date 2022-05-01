@@ -12,6 +12,9 @@ object Versions {
     const val kotlin = "1.6.10"
     const val gradle = "7.2"
 
+    const val hilt = "2.38.1"
+    const val hiltNavigationCompose = "1.0.0"
+
     const val compose = "1.1.1"
     const val activityCompose = "1.4.0"
 
@@ -52,6 +55,10 @@ object Libs {
     const val navigation = "androidx.navigation:navigation-compose:${Versions.navigation}"
     const val dagger = "com.google.dagger:dagger:${Versions.dagger}"
 
+    const val hilt = "com.google.dagger:hilt-android:${Versions.hilt}"
+    const val hiltNavigationCompose =
+        "androidx.hilt:hilt-navigation-compose:${Versions.hiltNavigationCompose}"
+
     const val kotlinxSerialization =
         "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}"
 
@@ -79,5 +86,6 @@ object DebugLibs {
 
 object KaptCompilers {
     const val dagger = "com.google.dagger:dagger-compiler:${Versions.dagger}"
+    const val hilt = "com.google.dagger:hilt-android-compiler:${Versions.hilt}"
     const val room = "androidx.room:room-compiler:${Versions.room}"
 }
